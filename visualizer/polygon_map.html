@@ -5,15 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>轨迹示例</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
-    <script src="main.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBGtAjineA38QR6HUji8B3Cte8VCrLHxPA&callback=initMap"
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJW4jsPlNKgv6jFm3B5Edp5ywgdqLWdmc&callback=initMap"
     type="text/javascript"></script>
     <style>
             /* Set the size of the div element that contains the map */
            #map {
-             height: 400px;  /* The height is 400 pixels */
+             height: 80%;  /* The height is 400 pixels */
              width: 100%;  /* The width is the width of the web page */
+            }
+            #path-input{
+                height: 40px;
+                width:100px;
+            }
+            #path-click{
+
             }
     </style>
 </head>
@@ -21,16 +26,46 @@
         <h3>My Google Maps Demo</h3>
         <!--The div element for the map -->
         <div id="map"></div>
+        <textarea id="path-input"></textarea>
+        <button id='path-click' type="button" onclick='setPolygon()'>显示轨迹</button>
         <script>
             // Initialize and add the map
+            var map;
             function initMap() {
             // The location of Uluru
-            var uluru = {lat: -25.344, lng: 131.036};
+            var uluru = {lat: 41.18058, lng: -8.624952};
             // The map, centered at Uluru
-            var map = new google.maps.Map(
+            map = new google.maps.Map(
                 document.getElementById('map'), {zoom: 4, center: uluru});
             // The marker, positioned at Uluru
             var marker = new google.maps.Marker({position: uluru, map: map});
+            }
+            //get random color of path
+            var getRandomColor = function(){
+                  return (function(m,s,c){
+                    return (c ? arguments.callee(m,s,c-1) : '#') +
+                      s[m.floor(m.random() * 16)]
+                  })(Math,'0123456789abcdef',5)
+            }
+            // picture polygon
+            function setPolygon(){
+                var posStr = document.getElementById("path-input").value;
+                var positions = JSON.parse(posStr);
+                var myTrip=new Array();
+
+                for(var i = 0 ; i<positions.length; i++){
+                    console.log(positions[i][1] + ' ' + positions[i][0]);
+                    var x=new google.maps.LatLng(positions[i][1],positions[i][0]);
+                    myTrip.push(x);
+                }
+
+                var flightPath=new google.maps.Polyline({
+                  path:myTrip,
+                  strokeColor:getRandomColor,
+                  strokeOpacity:0.8,
+                  strokeWeight:2
+                  });
+                flightPath.setMap(map);
             }
         </script>
         <!--Load the API from the specified URL
@@ -39,4 +74,4 @@
         * The callback parameter executes the initMap() function
         -->
 </body>
-</html>>
+</html>
