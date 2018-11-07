@@ -14,8 +14,8 @@
              width: 100%;  /* The width is the width of the web page */
             }
             #path-input{
-                height: 40px;
-                width:100px;
+                height: 10%;
+                width:30%;
             }
             #path-click{
 
@@ -23,10 +23,10 @@
     </style>
 </head>
 <body>
-        <h3>My Google Maps Demo</h3>
+        <!-- <h3></h3> -->
         <!--The div element for the map -->
         <div id="map"></div>
-        <textarea id="path-input"></textarea>
+        <textarea id="path-input" placeholder="输入轨迹列表，多个请用‘;’隔开"></textarea>
         <button id='path-click' type="button" onclick='setPolygon()'>显示轨迹</button>
         <script>
             // Initialize and add the map
@@ -37,7 +37,7 @@
             var uluru = {lat: 41.155898, lng: -8.629148};
             // The map, centered at Uluru
             map = new google.maps.Map(
-                document.getElementById('map'), {zoom: 4, center: uluru});
+                document.getElementById('map'), {zoom: 12, center: uluru});
             // The marker, positioned at Uluru
             var marker = new google.maps.Marker({position: uluru, map: map});
             }
@@ -55,14 +55,15 @@
                 var myTrip=new Array();
 
                 for(var i = 0 ; i<positions.length; i++){
-                    console.log(positions[i][1] + ' ' + positions[i][0]);
+                    // console.log(positions[i][1] + ' ' + positions[i][0]);
                     var x=new google.maps.LatLng(positions[i][1],positions[i][0]);
                     myTrip.push(x);
                 }
-
+                var color = getRandomColor()
+                console.log(color)
                 var flightPath=new google.maps.Polyline({
                   path:myTrip,
-                  strokeColor:getRandomColor,
+                  strokeColor:color,
                   strokeOpacity:0.8,
                   strokeWeight:2
                   });
