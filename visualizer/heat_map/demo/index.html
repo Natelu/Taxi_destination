@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Leaflet.heat demo</title>
+    <title>起始-终点热力图</title>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <style>
-        #map { width: 800px; height: 600px; }
+        /*#map { width: 100%; height: 700px; }*/
         body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
-        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
         a { color: #0077ff; }
+        #map {
+             height: 700px;  /* The height is 400 pixels */
+             width: 100%;  /* The width is the width of the web page */
+            }
+        #path-input{
+            height: 10%;
+            width:30%;
+        }
+        #path-click{
+        }
     </style>
 </head>
 <body>
-
-<p>
-    A 10,000-point demo of <a href="https://github.com/Leaflet/Leaflet.heat">Leaflet.heat</a>, a tiny and fast Leaflet heatmap plugin.
-    <iframe class="ghbtns" src="http://ghbtns.com/github-btn.html?user=Leaflet&amp;repo=Leaflet.heat&amp;type=watch&amp;count=true"
-  allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
-</p>
-
 <div id="map"></div>
-
+<textarea id="path-input" placeholder="输入轨迹列表，多个请用‘;’隔开"></textarea>
+<button id='path-click' type="button" onclick='setPolygon()'>显示轨迹</button>
 <!-- <script src="../node_modules/simpleheat/simpleheat.js"></script>
 <script src="../src/HeatLayer.js"></script> -->
 
@@ -37,8 +40,36 @@ var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 addressPoints = addressPoints.map(function (p) { return [p[1], p[0]]; });
 
-var heat = L.heatLayer(addressPoints).addTo(map);
+var heat = L.heatLayer(addressPoints, {radius:10}).addTo(map);
 
+var getRandomColor = function(){
+                  return (function(m,s,c){
+                    return (c ? arguments.callee(m,s,c-1) : '#') +
+                      s[m.floor(m.random() * 16)]
+                  })(Math,'0123456789abcdef',5)
+            }
+// picture polygon
+function setPolygon(){
+    var posStr = document.getElementById("path-input").value;
+    var positions = JSON.parse(posStr);
+    var myTrip=new Array();
+
+    for(var i = 0 ; i<positions.length; i++){
+        // console.log(positions[i][1] + ' ' + positions[i][0]);
+        // var x=new google.maps.LatLng(positions[i][1],positions[i][0]);
+        myTrip.push([positions[i][1],positions[i][0]]);
+    }
+    var _color = getRandomColor()
+    var polyline = L.polyline(myTrip, {color: _color}).addTo(map);
+    map.fitBounds(polyline.getBounds());
+    // var flightPath=new google.maps.Polyline({
+    //   path:myTrip,
+    //   strokeColor:_color,
+    //   strokeOpacity:0.8,
+    //   strokeWeight:2
+    //   });
+    // flightPath.setMap(map);
+}
 </script>
 </body>
 </html>
