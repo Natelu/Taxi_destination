@@ -24,30 +24,55 @@
 <div id="map"></div>
 <textarea id="path-input" placeholder="输入轨迹列表，多个请用‘;’隔开"></textarea>
 <button id='path-click' type="button" onclick='setPolygon()'>显示轨迹</button>
+<button id='heat-click' type="button" onclick='loadHeat()'>加载热区</button>
+<button id='grid-click' type="button" onclick='loadGrid()'>加载网格</button>
+
+
 <!-- <script src="../node_modules/simpleheat/simpleheat.js"></script>
 <script src="../src/HeatLayer.js"></script> -->
 
 <script src="../dist/leaflet-heat.js"></script>
 
 <script src="../src/realworld.js"></script>
-<script>
-
+<script src="../src/grid.js"></script>
+<script type="text/javascript">
 var map = L.map('map').setView([41.155898, -8.629148], 12);
 
 var tiles = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-addressPoints = addressPoints.map(function (p) { return [p[1], p[0]]; });
+function loadHeat(){
+    addressPoints = addressPoints.map(function (p) { return [p[1], p[0]]; });
 
-var heat = L.heatLayer(addressPoints, {radius:10}).addTo(map);
+    var heat = L.heatLayer(addressPoints, {radius:10}).addTo(map);
 
+    
+}
 var getRandomColor = function(){
-                  return (function(m,s,c){
-                    return (c ? arguments.callee(m,s,c-1) : '#') +
-                      s[m.floor(m.random() * 16)]
-                  })(Math,'0123456789abcdef',5)
-            }
+                      return (function(m,s,c){
+                        return (c ? arguments.callee(m,s,c-1) : '#') +
+                          s[m.floor(m.random() * 16)]
+                      })(Math,'0123456789abcdef',5)
+                }
+function loadGrid(){
+    //水平横线
+    for(var i=0;i<grids_h.length;i++){
+        var myTrip=new Array();
+        myTrip.push([grids_h[i][0][1],grids_h[i][0][0]])
+        myTrip.push([grids_h[i][1][1],grids_h[i][1][0]])
+        var polyline = L.polyline(myTrip, {color: '#000000', weight:0.5}).addTo(map);
+        map.fitBounds(polyline.getBounds());
+    }
+    //竖直线
+    for(var i=0;i<grids_v.length;i++){
+        var myTrip=new Array();
+        myTrip.push([grids_v[i][0][1],grids_v[i][0][0]])
+        myTrip.push([grids_v[i][1][1],grids_v[i][1][0]])
+        var polyline = L.polyline(myTrip, {color: '#000000', weight:0.5}).addTo(map);
+        map.fitBounds(polyline.getBounds());
+    }
+}
 // picture polygon
 function setPolygon(){
     var posStr = document.getElementById("path-input").value;
